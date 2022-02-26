@@ -19,7 +19,11 @@ tigervnc-viewer \
 tigervnc-xorg-extension \
 websockify -y
 
-COPY <<EOF /root/start.sh
+RUN useradd -mU -s /usr/bin/bash user
+
+USER user
+
+COPY --chown=user:user <<EOF /home/user/start.sh
 #!/bin/bash
 echo "Starting tigervnc server with i3"
 /usr/bin/tigervncserver -xstartup i3
@@ -37,7 +41,7 @@ RUN <<EOF
 cd
 git clone https://github.com/novnc/noVNC.git
 printf "password\npassword\n\n" | vncpasswd
-chmod +x /root/start.sh
+chmod +x /home/user/start.sh
 EOF
 
-ENTRYPOINT ["/root/start.sh"]
+ENTRYPOINT ["/home/user/start.sh"]
